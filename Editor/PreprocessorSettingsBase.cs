@@ -1,6 +1,8 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
+using System.IO;
+using System.Text;
 using UnityEngine;
 
 namespace Kogane
@@ -8,8 +10,9 @@ namespace Kogane
     /// <summary>
     /// テクスチャや SpriteAtlas の設定の基底クラス
     /// </summary>
+    [Serializable]
     public abstract class PreprocessorSettingsBase<TPreprocessorSettings, TPreprocessorSetting> :
-        ScriptableSingleton<TPreprocessorSettings>,
+        ScriptableObject,
         IEnumerable<TPreprocessorSetting>
         where TPreprocessorSettings : ScriptableObject
     {
@@ -18,12 +21,40 @@ namespace Kogane
         //================================================================================
         [SerializeField] private TPreprocessorSetting[] m_array;
 
+        private static TPreprocessorSettings m_instance;
+
+        public static TPreprocessorSettings GetInstance( string path )
+        {
+            if ( m_instance != null ) return m_instance;
+
+            m_instance = CreateInstance<TPreprocessorSettings>();
+
+            if ( !File.Exists( path ) ) return m_instance;
+
+            var json = File.ReadAllText( path, Encoding.UTF8 );
+
+            if ( string.IsNullOrWhiteSpace( json ) ) return m_instance;
+
+            JsonUtility.FromJsonOverwrite( json, m_instance );
+
+            if ( m_instance != null ) return m_instance;
+
+            m_instance = CreateInstance<TPreprocessorSettings>();
+
+            return m_instance;
+        }
+
         //================================================================================
         // 関数
         //================================================================================
-        public void Save()
+        protected void SaveToJson( string path )
         {
-            Save( true );
+            File.WriteAllText
+            (
+                path: path,
+                contents: JsonUtility.ToJson( m_instance, true ),
+                encoding: Encoding.UTF8
+            );
         }
 
         public IEnumerator<TPreprocessorSetting> GetEnumerator()
