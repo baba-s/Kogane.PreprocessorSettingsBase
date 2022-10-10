@@ -21,28 +21,10 @@ namespace Kogane
         //================================================================================
         [SerializeField] private TPreprocessorSetting[] m_array;
 
+        //================================================================================
+        // 変数(static)
+        //================================================================================
         private static TPreprocessorSettings m_instance;
-
-        public static TPreprocessorSettings GetInstance( string path )
-        {
-            if ( m_instance != null ) return m_instance;
-
-            m_instance = CreateInstance<TPreprocessorSettings>();
-
-            if ( !File.Exists( path ) ) return m_instance;
-
-            var json = File.ReadAllText( path, Encoding.UTF8 );
-
-            if ( string.IsNullOrWhiteSpace( json ) ) return m_instance;
-
-            JsonUtility.FromJsonOverwrite( json, m_instance );
-
-            if ( m_instance != null ) return m_instance;
-
-            m_instance = CreateInstance<TPreprocessorSettings>();
-
-            return m_instance;
-        }
 
         //================================================================================
         // 関数
@@ -65,6 +47,30 @@ namespace Kogane
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
+        }
+
+        //================================================================================
+        // 関数(static)
+        //================================================================================
+        protected static TPreprocessorSettings GetInstance( string path )
+        {
+            if ( m_instance != null ) return m_instance;
+
+            m_instance = CreateInstance<TPreprocessorSettings>();
+
+            if ( !File.Exists( path ) ) return m_instance;
+
+            var json = File.ReadAllText( path, Encoding.UTF8 );
+
+            if ( string.IsNullOrWhiteSpace( json ) ) return m_instance;
+
+            JsonUtility.FromJsonOverwrite( json, m_instance );
+
+            if ( m_instance != null ) return m_instance;
+
+            m_instance = CreateInstance<TPreprocessorSettings>();
+
+            return m_instance;
         }
     }
 }
