@@ -28,18 +28,31 @@ namespace Kogane.Internal
                 var settingLabelsRect = new Rect( position ) { width = labelWidth, y     = pathRect.yMax + 2, };
                 var settingsRect      = new Rect( position ) { x     = labelWidth, y     = pathRect.yMax + 2, width = position.width - labelWidth * widthRate, };
 
-                var pathProperty     = property.FindPropertyRelative( "m_path" );
-                var settingsProperty = property.FindPropertyRelative( "m_settings" );
+                var pathProperty = property.FindPropertyRelative( "m_path" );
+                var guidProperty = property.FindPropertyRelative( "m_guid" );
+
+                var guid      = guidProperty.stringValue;
+                var assetPath = AssetDatabase.GUIDToAssetPath( guid );
+                var asset     = AssetDatabase.LoadAssetAtPath<ScriptableObject>( assetPath );
 
                 EditorGUI.PrefixLabel( pathLabelRect, new GUIContent( "Path" ) );
                 EditorGUI.PropertyField( pathRect, pathProperty, GUIContent.none );
                 EditorGUI.PrefixLabel( settingLabelsRect, new GUIContent( "Settings" ) );
-                EditorGUI.PropertyField( settingsRect, settingsProperty, GUIContent.none );
+
+                var newAsset = EditorGUI.ObjectField( settingsRect, asset, typeof( ScriptableObject ), false );
+
+                if ( asset != newAsset )
+                {
+                    var newAssetPath = AssetDatabase.GetAssetPath( newAsset );
+                    var newGuid      = AssetDatabase.GUIDFromAssetPath( newAssetPath );
+
+                    guidProperty.stringValue = newGuid.ToString();
+                }
 
                 // アセットパスのドラッグ & ドロップ対応
-                if ( GetDragAndDropAssetPath( pathRect, out var assetPath ) )
+                if ( GetDragAndDropAssetPath( pathRect, out var newPath ) )
                 {
-                    pathProperty.stringValue = assetPath;
+                    pathProperty.stringValue = newPath;
                 }
             }
         }
