@@ -52,9 +52,9 @@ namespace Kogane
         //================================================================================
         // 関数(static)
         //================================================================================
-        protected static TPreprocessorSettings GetInstance( string path )
+        protected static TPreprocessorSettings GetInstance( string path, bool force )
         {
-            if ( m_instance != null ) return m_instance;
+            if ( !force && m_instance != null ) return m_instance;
 
             m_instance = CreateInstance<TPreprocessorSettings>();
 
