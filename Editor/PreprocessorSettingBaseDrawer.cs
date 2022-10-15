@@ -35,9 +35,9 @@ namespace Kogane.Internal
                 var assetPath = AssetDatabase.GUIDToAssetPath( guid );
                 var asset     = AssetDatabase.LoadAssetAtPath<ScriptableObject>( assetPath );
 
-                EditorGUI.PrefixLabel( pathLabelRect, new GUIContent( "Path" ) );
+                EditorGUI.PrefixLabel( pathLabelRect, new( "Path" ) );
                 EditorGUI.PropertyField( pathRect, pathProperty, GUIContent.none );
-                EditorGUI.PrefixLabel( settingLabelsRect, new GUIContent( "Settings" ) );
+                EditorGUI.PrefixLabel( settingLabelsRect, new( "Settings" ) );
 
                 var newAsset = EditorGUI.ObjectField( settingsRect, asset, typeof( ScriptableObject ), false );
 
