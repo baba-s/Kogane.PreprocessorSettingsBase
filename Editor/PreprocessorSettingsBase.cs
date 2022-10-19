@@ -19,7 +19,7 @@ namespace Kogane
         //================================================================================
         // 変数(SerializeField)
         //================================================================================
-        [SerializeField] private TPreprocessorSetting[] m_array;
+        [SerializeField] private TPreprocessorSetting[] m_array = Array.Empty<TPreprocessorSetting>();
 
         //================================================================================
         // 変数(static)
